@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/created-by: application-service
+    app.kubernetes.io/instance: helloworld
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: helloworld
+    app.kubernetes.io/part-of: m5-application
+  name: helloworld
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: helloworld
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: helloworld
+    spec:
+      containers:
+      - image: quay.io/release-e2e/user-workload:demo-helloworld
+        imagePullPolicy: Always
+        name: container-image
+        resources: {}
+status: {}

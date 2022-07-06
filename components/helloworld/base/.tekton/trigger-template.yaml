@@ -1,0 +1,49 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  creationTimestamp: null
+  name: helloworld
+  namespace: demo
+spec:
+  params:
+  - name: git-revision
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      annotations:
+        build.appstudio.openshift.io/application: m5-application
+        build.appstudio.openshift.io/build: "true"
+        build.appstudio.openshift.io/component: helloworld
+        build.appstudio.openshift.io/type: build
+        build.appstudio.openshift.io/version: "0.1"
+        pipelines.appstudio.openshift.io/type: build
+      creationTimestamp: null
+      generateName: helloworld-
+      labels:
+        build.appstudio.openshift.io/application: m5-application
+        build.appstudio.openshift.io/build: "true"
+        build.appstudio.openshift.io/component: helloworld
+        build.appstudio.openshift.io/type: build
+        build.appstudio.openshift.io/version: "0.1"
+        pipelines.appstudio.openshift.io/type: build
+      namespace: demo
+    spec:
+      params:
+      - name: git-url
+        value: https://github.com/scoheb/go-hello-world.git
+      - name: output-image
+        value: quay.io/release-e2e/user-workload:demo-helloworld-$(tt.params.git-revision)
+      pipelineRef:
+        bundle: quay.io/redhat-appstudio/build-templates-bundle:875eb880fa5eed9cc043fc623f6ec3a46cf7d2e8
+        name: docker-build
+      workspaces:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: appstudio
+        subPath: helloworld/$(tt.params.git-revision)
+      - name: registry-auth
+        secret:
+          secretName: redhat-appstudio-registry-pull-secret
+    status: {}
+status: {}
